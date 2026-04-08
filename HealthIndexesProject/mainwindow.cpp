@@ -104,17 +104,11 @@ void MainWindow::OnAddClicked()
 void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
-        // Обновляем плейсхолдеры
         weightInput->setPlaceholderText(tr("кг"));
         heightInput->setPlaceholderText(tr("см"));
-
-        // Обновляем статические лейблы
         weightLabel->setText(tr("Введите вес:"));
         heightLabel->setText(tr("Введите рост:"));
         bmiButton->setText(tr("Рассчитать ИМТ"));
-
-        // Обновляем bmiLabel и answerLabel через ретрансляцию всего UI
-        // Просто вызываем обновление вручную
         QString lang = langCombo->currentData().toString();
         qApp->removeTranslator(&translator);
         if (lang == "en") {
@@ -139,14 +133,13 @@ void MainWindow::onLanguageChanged()
         }
     }
 
-    // Принудительно обновляем ВСЁ
+
     weightInput->setPlaceholderText(tr("кг"));
     heightInput->setPlaceholderText(tr("см"));
     weightLabel->setText(tr("Введите вес:"));
     heightLabel->setText(tr("Введите рост:"));
     bmiButton->setText(tr("Рассчитать ИМТ"));
 
-    // Обновляем bmiLabel если в нём есть число
     QString currentBmiText = bmiLabel->text();
     if (currentBmiText.contains(':')) {
         QString number = currentBmiText.section(':', 1).trimmed();
@@ -155,10 +148,9 @@ void MainWindow::onLanguageChanged()
         bmiLabel->setText(tr("ИМТ:"));
     }
 
-    // Обновляем answerLabel если там есть текст
+
     QString currentAnswer = answerLabel->text();
     if (!currentAnswer.isEmpty()) {
-        // Заново вызываем расчёт чтобы обновить категорию
         OnAddClicked();
     }
 }
