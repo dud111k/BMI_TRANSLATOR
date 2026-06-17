@@ -1,22 +1,29 @@
-#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QTranslator>
-#include <QLabel>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QComboBox>
+
+class QLabel;
+class QPushButton;
+class QLineEdit;
+class QComboBox;
+
+struct WindowState
+{
+    QString weight;
+    QString height;
+
+    QRect geometry;
+};
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-protected:
-    void changeEvent(QEvent *event) override;
-
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QTranslator* translator,
+                        QWidget *parent = nullptr);
+
     ~MainWindow();
 
 private slots:
@@ -24,16 +31,27 @@ private slots:
     void onLanguageChanged();
 
 private:
+    void buildUi();
+
+    WindowState saveWindowState();
+    void restoreWindowState(const WindowState& state);
+
+private:
+    // translator теперь хранится pointer-ом
+    QTranslator* translator;
+
+    QWidget* central;
+
     QLineEdit* heightInput;
     QLineEdit* weightInput;
+
     QLabel* bmiLabel;
     QLabel* answerLabel;
-    QComboBox* langCombo;
-    QTranslator translator;
 
     QLabel* weightLabel;
     QLabel* heightLabel;
-    QPushButton* bmiButton;
-};
 
-#endif // MAINWINDOW_H
+    QPushButton* bmiButton;
+
+    QComboBox* langCombo;
+};
