@@ -1,7 +1,7 @@
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTranslator>
 
 class QLabel;
 class QPushButton;
@@ -21,24 +21,30 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QTranslator* translator,
+    explicit MainWindow(const QString& language,
                         QWidget *parent = nullptr);
 
     ~MainWindow();
 
+    WindowState saveWindowState();
+
+    void restoreWindowState(
+        const WindowState& state
+        );
+
+signals:
+    void languageChanged(const QString& lang);
+
 private slots:
     void OnAddClicked();
+
     void onLanguageChanged();
 
 private:
     void buildUi();
 
-    WindowState saveWindowState();
-    void restoreWindowState(const WindowState& state);
-
 private:
-    // translator теперь хранится pointer-ом
-    QTranslator* translator;
+    QString currentLanguage;
 
     QWidget* central;
 
@@ -55,3 +61,5 @@ private:
 
     QComboBox* langCombo;
 };
+
+#endif // MAINWINDOW_H
