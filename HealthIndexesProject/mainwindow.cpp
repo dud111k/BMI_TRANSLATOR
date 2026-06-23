@@ -262,5 +262,5 @@ void MainWindow::onLanguageChanged()
     QString lang =
         langCombo->currentData().toString();
 
-    emit languageChanged(lang);
+    emit restartRequested(lang);
 }

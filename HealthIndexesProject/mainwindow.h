@@ -33,7 +33,7 @@ public:
         );
 
 signals:
-    void languageChanged(const QString& lang);
+    void restartRequested(const QString& lang);
 
 private slots:
     void OnAddClicked();

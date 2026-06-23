@@ -3,82 +3,47 @@
 #include <QApplication>
 #include <QTranslator>
 
-MainWindow* createWindow(
-    QTranslator& translator,
-    QString& currentLanguage,
-    WindowState state = {}
-    )
-{
-    MainWindow* window =
-        new MainWindow(currentLanguage);
+bool needRestart = true;
 
-    window->restoreWindowState(state);
-
-    QObject::connect(
-        window,
-        &MainWindow::languageChanged,
-        [&translator,
-         &currentLanguage,
-         window](const QString& lang)
-        {
-            currentLanguage = lang;
-
-            WindowState state =
-                window->saveWindowState();
-
-            qApp->removeTranslator(
-                &translator
-                );
-
-            if (lang == "en")
-            {
-                translator.load("app_en.qm");
-
-                qApp->installTranslator(
-                    &translator
-                    );
-            }
-
-            else
-            {
-                qApp->removeTranslator(
-                    &translator
-                    );
-            }
-
-            MainWindow* newWindow =
-                createWindow(
-                    translator,
-                    currentLanguage,
-                    state
-                    );
-
-            newWindow->show();
-
-            window->close();
-
-            window->deleteLater();
-        }
-        );
-
-    return window;
-}
+QString currentLanguage = "ru";
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
-    QTranslator translator;
+    while (needRestart)
+    {
+        needRestart = false;
 
-    QString currentLanguage = "ru";
+        QTranslator translator;
 
-    MainWindow* window =
-        createWindow(
-            translator,
-            currentLanguage
+        if (currentLanguage == "en")
+        {
+            translator.load("app_en.qm");
+
+            app.installTranslator(&translator);
+        }
+
+        MainWindow window(currentLanguage);
+
+        QObject::connect(
+            &window,
+            &MainWindow::restartRequested,
+            [&](const QString& lang)
+            {
+                currentLanguage = lang;
+
+                needRestart = true;
+
+                app.quit();
+            }
             );
 
-    window->show();
+        window.show();
 
-    return a.exec();
+        app.exec();
+
+    }
+
+    return 0;
 }
